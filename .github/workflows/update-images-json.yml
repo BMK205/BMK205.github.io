@@ -20,8 +20,9 @@ jobs:
           IMAGES_DIR="images"
           JSON_FILE="images.json"
           echo "[" > $JSON_FILE
-          for IMAGE in $(find $IMAGES_DIR -type f -name '*.jpg' -o -name '*.png' -o -name '*.jpeg'); do
-            echo "  \"$IMAGE\"," >> $JSON_FILE
+          find "$IMAGES_DIR" -type f \( -name '*.jpg' -o -name '*.png' -o -name '*.jpeg' \) -print0 | \
+          while IFS= read -r -d '' IMAGE; do
+            echo "  \"$(echo $IMAGE | sed 's/ /%20/g')\"," >> $JSON_FILE
           done
           # Remove the trailing comma from the last element
           sed -i '$ s/,$//' $JSON_FILE
