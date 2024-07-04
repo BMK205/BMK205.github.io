@@ -6,7 +6,6 @@
       body {
         margin: 0;
         overflow: hidden;
-        background-color: black;
       }
       img {
         display: block;
@@ -20,32 +19,33 @@
   <body>
     <img id="slideshow" src="" alt="Slideshow Image" />
     <script>
-      let imageUrls = [];
+      let imageObjects = [];
       let index = 0;
 
-      async function fetchImageUrls() {
+      async function fetchImageObjects() {
         const response = await fetch("images.json"); // Fetch the JSON file
-        imageUrls = await response.json();
+        imageObjects = await response.json();
       }
 
       function showImage() {
         const imgElement = document.getElementById("slideshow");
+        const currentImage = imageObjects[index];
         imgElement.style.opacity = 0;
+        imgElement.src = currentImage.url;
         setTimeout(() => {
-          imgElement.src = imageUrls[index];
           imgElement.style.opacity = 1;
-        }, 500);
+        }, 100); // Delay for smoother transition
+        setTimeout(nextImage, currentImage.duration);
       }
 
       function nextImage() {
-        index = (index + 1) % imageUrls.length;
+        index = (index + 1) % imageObjects.length;
         showImage();
       }
 
       async function startSlideshow() {
-        await fetchImageUrls();
+        await fetchImageObjects();
         showImage();
-        setInterval(nextImage, 3000); // Change image every 3 seconds
       }
 
       startSlideshow();
