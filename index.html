@@ -29,7 +29,7 @@
 
         function showNextImage() {
           const imgElement = document.getElementById("slideshow");
-          imgElement.src = imageUrls[index];
+          imgElement.src = "images/" + imageUrls[index];
           index = (index + 1) % imageUrls.length;
         }
 
