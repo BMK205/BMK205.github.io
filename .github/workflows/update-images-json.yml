@@ -26,7 +26,8 @@ jobs:
             filename=$(basename "$IMAGE")
             duration=$(echo "$filename" | grep -oE '^[0-9]+')
             if [ -z "$duration" ]; then
-            duration="5000" # Default duration in milliseconds (5 seconds)
+              duration="5000" # Default duration in milliseconds (5 seconds)
+            fi
             echo "  { \"url\": \"$IMAGE\", \"duration\": $duration }," >> $JSON_FILE
           done
           # Remove the trailing comma from the last element
