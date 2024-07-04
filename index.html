@@ -1,1 +1,43 @@
-"Hello World" 
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Image Slideshow</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      img {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <img id="slideshow" src="" alt="Slideshow Image" />
+    <script>
+      async function fetchImageUrls() {
+        const response = await fetch("images.json"); // Fetch the JSON file
+        return await response.json();
+      }
+
+      async function startSlideshow() {
+        const imageUrls = await fetchImageUrls();
+        let index = 0;
+
+        function showNextImage() {
+          const imgElement = document.getElementById("slideshow");
+          imgElement.src = imageUrls[index];
+          index = (index + 1) % imageUrls.length;
+        }
+
+        setInterval(showNextImage, 3000); // Change image every 3 seconds
+        showNextImage(); // Initial call
+      }
+
+      startSlideshow();
+    </script>
+  </body>
+</html>
