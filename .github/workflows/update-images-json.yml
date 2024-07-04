@@ -1,0 +1,38 @@
+name: Update images.json
+
+on:
+  push:
+    paths:
+      - "images/**" # Only trigger on changes in the images folder
+  pull_request:
+    paths:
+      - "images/**" # Also trigger on changes in the images folder in PRs
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Generate images.json
+        run: |
+          IMAGES_DIR="images"
+          JSON_FILE="images.json"
+          echo "[" > $JSON_FILE
+          for IMAGE in $(find $IMAGES_DIR -type f -name '*.jpg' -o -name '*.png' -o -name '*.jpeg'); do
+            echo "  \"$IMAGE\"," >> $JSON_FILE
+          done
+          # Remove the trailing comma from the last element
+          sed -i '$ s/,$//' $JSON_FILE
+          echo "]" >> $JSON_FILE
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add images.json
+          git commit -m "Update images.json"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
