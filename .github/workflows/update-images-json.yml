@@ -22,6 +22,10 @@ jobs:
           echo "[" > $JSON_FILE
           find "$IMAGES_DIR" -type f \( -name '*.jpg' -o -name '*.png' -o -name '*.jpeg' \) -print0 | \
           while IFS= read -r -d '' IMAGE; do
+            # Extract filename and duration from image path
+            filename=$(basename "$IMAGE")
+            duration=$(echo "$filename" | grep -oE '^[0-9]+')
+            if [ -z "$duration" ]; then
             duration="5000" # Default duration in milliseconds (5 seconds)
             echo "  { \"url\": \"$IMAGE\", \"duration\": $duration }," >> $JSON_FILE
           done
