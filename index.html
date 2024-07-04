@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Image Slideshow</title>
+    <title>Enhanced Image Slideshow</title>
     <style>
       body {
         margin: 0;
@@ -12,29 +12,39 @@
         width: 100vw;
         height: 100vh;
         object-fit: cover;
+        transition: opacity 1s;
       }
     </style>
   </head>
   <body>
     <img id="slideshow" src="" alt="Slideshow Image" />
     <script>
+      let imageUrls = [];
+      let index = 0;
+
       async function fetchImageUrls() {
         const response = await fetch("images.json"); // Fetch the JSON file
-        return await response.json();
+        imageUrls = await response.json();
+      }
+
+      function showImage() {
+        const imgElement = document.getElementById("slideshow");
+        imgElement.style.opacity = 0;
+        setTimeout(() => {
+          imgElement.src = imageUrls[index];
+          imgElement.style.opacity = 1;
+        }, 500);
+      }
+
+      function nextImage() {
+        index = (index + 1) % imageUrls.length;
+        showImage();
       }
 
       async function startSlideshow() {
-        const imageUrls = await fetchImageUrls();
-        let index = 0;
-
-        function showNextImage() {
-          const imgElement = document.getElementById("slideshow");
-          imgElement.src = imageUrls[index];
-          index = (index + 1) % imageUrls.length;
-        }
-
-        setInterval(showNextImage, 3000); // Change image every 3 seconds
-        showNextImage(); // Initial call
+        await fetchImageUrls();
+        showImage();
+        setInterval(nextImage, 3000); // Change image every 3 seconds
       }
 
       startSlideshow();
