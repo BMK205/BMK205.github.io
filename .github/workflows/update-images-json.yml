@@ -19,22 +19,29 @@ jobs:
         run: |
           IMAGES_DIR="images"
           JSON_FILE="images.json"
-          echo "[" > $JSON_FILE
+          echo "[" > "$JSON_FILE"
           find "$IMAGES_DIR" -type f \( -name '*.jpg' -o -name '*.png' -o -name '*.jpeg' \) -print0 | \
           while IFS= read -r -d '' IMAGE; do
-            # Extract filename and duration from image path
+            # Extract filename from image path
             filename=$(basename "$IMAGE")
-            echo "$filename"
-            duration=$(echo "$filename" | grep -oE '^[0-9]+')
-            echo "$duration"
-            if [ -z "$duration" ]; then
+            
+            # Check if filename starts with a numerical prefix followed by underscore
+            if [[ $filename =~ ^([0-9]+)_ ]]; then
+              # Extract numerical prefix and multiply by 1000 for milliseconds
+              duration=$(( ${BASH_REMATCH[1]} * 1000 ))
+            else
               duration="5000" # Default duration in milliseconds (5 seconds)
             fi
-            echo "  { \"url\": \"$IMAGE\", \"duration\": $duration }," >> $JSON_FILE
+            
+            # Escape double quotes in image path for JSON
+            IMAGE=$(echo "$IMAGE" | sed 's/"/\\"/g')
+            
+            # Append JSON object to JSON_FILE
+            echo "  { \"url\": \"$IMAGE\", \"duration\": $duration }," >> "$JSON_FILE"
           done
           # Remove the trailing comma from the last element
-          sed -i '$ s/,$//' $JSON_FILE
-          echo "]" >> $JSON_FILE
+          sed -i '$ s/,$//' "$JSON_FILE"
+          echo "]" >> "$JSON_FILE"
 
       - name: Commit and push changes
         env:
