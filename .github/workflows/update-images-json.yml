@@ -24,7 +24,9 @@ jobs:
           while IFS= read -r -d '' IMAGE; do
             # Extract filename and duration from image path
             filename=$(basename "$IMAGE")
+            echo filename
             duration=$(echo "$filename" | grep -oE '^[0-9]+')
+            echo duration
             if [ -z "$duration" ]; then
               duration="5000" # Default duration in milliseconds (5 seconds)
             fi
