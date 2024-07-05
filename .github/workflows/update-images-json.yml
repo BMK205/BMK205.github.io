@@ -22,12 +22,13 @@ jobs:
           echo "[" > "$JSON_FILE"
           find "$IMAGES_DIR" -type f \( -name '*.jpg' -o -name '*.png' -o -name '*.jpeg' \) -print0 | \
           while IFS= read -r -d '' IMAGE; do
-            # Extract filename from image path
+            # Extract filename without extension
             filename=$(basename "$IMAGE")
+            name="${filename%.*}"
             
-            # Check if filename starts with a numerical prefix followed by underscore
-            if [[ $filename =~ ^([0-9]+)_ ]]; then
-              # Extract numerical prefix and multiply by 1000 for milliseconds
+            # Check if filename ends with underscore followed by numerical postfix
+            if [[ $name =~ _([0-9]+)$ ]]; then
+              # Extract numerical postfix and multiply by 1000 for milliseconds
               duration=$(( ${BASH_REMATCH[1]} * 1000 ))
             else
               duration="5000" # Default duration in milliseconds (5 seconds)
