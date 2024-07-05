@@ -20,7 +20,7 @@ jobs:
           IMAGES_DIR="images"
           JSON_FILE="images.json"
           echo "[" > "$JSON_FILE"
-          find "$IMAGES_DIR" -type f \( -name '*.jpg' -o -name '*.png' -o -name '*.jpeg' \) | sort | \
+          find "$IMAGES_DIR" -type f \( -name '*.jpg' -o -name '*.png' -o -name '*.jpeg' \) -print0 | sort | \
           while IFS= read -r -d '' IMAGE; do
             # Extract filename without extension
             filename=$(basename "$IMAGE")
